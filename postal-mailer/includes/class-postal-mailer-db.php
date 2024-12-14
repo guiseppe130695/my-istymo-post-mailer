@@ -36,8 +36,10 @@ class Postal_Mailer_DB {
             message text,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             status_paiement enum('pending','completed','failed') DEFAULT 'pending',
+            order_id bigint(20),
             PRIMARY KEY  (id),
-            KEY user_id (user_id)
+            KEY user_id (user_id),
+            KEY order_id (order_id)
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -54,7 +56,8 @@ class Postal_Mailer_DB {
             'city' => '',
             'status' => 'Non Envoyé',
             'message' => '',
-            'status_paiement' => 'pending'
+            'status_paiement' => 'pending',
+            'order_id' => null
         );
         
         $data = wp_parse_args($data, $defaults);
@@ -71,7 +74,8 @@ class Postal_Mailer_DB {
             'message' => sanitize_textarea_field($data['message']),
             'status_paiement' => in_array($data['status_paiement'], ['pending', 'completed', 'failed']) 
                 ? $data['status_paiement'] 
-                : 'pending'
+                : 'pending',
+            'order_id' => absint($data['order_id'])
         );
         
         $format = array(
@@ -83,7 +87,8 @@ class Postal_Mailer_DB {
             '%s', // city
             '%s', // status
             '%s', // message
-            '%s'  // status_paiement
+            '%s', // status_paiement
+            '%d'  // order_id
         );
         
         $result = $this->wpdb->insert($this->table_name, $data, $format);
@@ -96,119 +101,5 @@ class Postal_Mailer_DB {
         }
         
         return $this->wpdb->insert_id;
-    }
-    
-    public function get_recipients($per_page = 10, $current_page = 1, $args = array()) {
-        $defaults = array(
-            'user_id' => 0,
-            'status' => '',
-            'status_paiement' => '',
-            'orderby' => 'created_at',
-            'order' => 'DESC'
-        );
-        
-        $args = wp_parse_args($args, $defaults);
-        $offset = ($current_page - 1) * $per_page;
-        
-        $where = array('1=1');
-        $prepare = array();
-        
-        if (!empty($args['user_id'])) {
-            $where[] = 'user_id = %d';
-            $prepare[] = $args['user_id'];
-        }
-        
-        if (!empty($args['status'])) {
-            $where[] = 'status = %s';
-            $prepare[] = $args['status'];
-        }
-        
-        if (!empty($args['status_paiement'])) {
-            $where[] = 'status_paiement = %s';
-            $prepare[] = $args['status_paiement'];
-        }
-        
-        $orderby = sanitize_sql_orderby($args['orderby'] . ' ' . $args['order']);
-        
-        $prepare[] = absint($per_page);
-        $prepare[] = absint($offset);
-        
-        $sql = $this->wpdb->prepare(
-            "SELECT * FROM {$this->table_name} 
-            WHERE " . implode(' AND ', $where) . "
-            ORDER BY {$orderby}
-            LIMIT %d OFFSET %d",
-            $prepare
-        );
-        
-        return $this->wpdb->get_results($sql, ARRAY_A);
-    }
-    
-    public function get_total_recipients($args = array()) {
-        $defaults = array(
-            'user_id' => 0,
-            'status' => '',
-            'status_paiement' => ''
-        );
-        
-        $args = wp_parse_args($args, $defaults);
-        
-        $where = array('1=1');
-        $prepare = array();
-        
-        if (!empty($args['user_id'])) {
-            $where[] = 'user_id = %d';
-            $prepare[] = $args['user_id'];
-        }
-        
-        if (!empty($args['status'])) {
-            $where[] = 'status = %s';
-            $prepare[] = $args['status'];
-        }
-        
-        if (!empty($args['status_paiement'])) {
-            $where[] = 'status_paiement = %s';
-            $prepare[] = $args['status_paiement'];
-        }
-        
-        $sql = $this->wpdb->prepare(
-            "SELECT COUNT(*) FROM {$this->table_name} 
-            WHERE " . implode(' AND ', $where),
-            $prepare
-        );
-        
-        return (int) $this->wpdb->get_var($sql);
-    }
-    
-    public function update_status($id, $status) {
-        return $this->wpdb->update(
-            $this->table_name,
-            array('status' => sanitize_text_field($status)),
-            array('id' => absint($id)),
-            array('%s'),
-            array('%d')
-        );
-    }
-    
-    public function update_payment_status($id, $status) {
-        if (!in_array($status, ['pending', 'completed', 'failed'])) {
-            return false;
-        }
-        
-        return $this->wpdb->update(
-            $this->table_name,
-            array('status_paiement' => $status),
-            array('id' => absint($id)),
-            array('%s'),
-            array('%d')
-        );
-    }
-    
-    public function delete_recipient($id) {
-        return $this->wpdb->delete(
-            $this->table_name,
-            array('id' => absint($id)),
-            array('%d')
-        );
     }
 }

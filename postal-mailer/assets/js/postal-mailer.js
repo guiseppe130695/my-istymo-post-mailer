@@ -60,8 +60,7 @@ function initPostalMailer() {
             });
             
             if (response.success) {
-                // Clear localStorage after successful submission
-                POSTAL_MAILER_STORAGE.clearSelectedProperties();
+                // Redirect to cart without clearing localStorage
                 window.location.href = response.data.redirect_url;
             } else {
                 throw new Error(response.data.message);
@@ -69,7 +68,6 @@ function initPostalMailer() {
         } catch (error) {
             console.error('Error:', error);
             alert('Une erreur est survenue. Veuillez réessayer.');
-        } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Envoyer';
         }

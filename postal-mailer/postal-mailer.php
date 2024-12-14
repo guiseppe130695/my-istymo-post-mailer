@@ -24,6 +24,8 @@ require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-cart.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-form.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-db.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-admin.php';
+require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-woocommerce.php';
+require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-logger.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/enqueue.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/template-loader.php';
 
@@ -32,4 +34,6 @@ add_action('plugins_loaded', function() {
     Postal_Mailer_Cart::get_instance();
     Postal_Mailer_Form::get_instance();
     Postal_Mailer_Admin::get_instance();
+    Postal_Mailer_WooCommerce::get_instance();
+    Postal_Mailer_Logger::get_instance();
 });
