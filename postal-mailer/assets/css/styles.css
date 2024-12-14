@@ -1,0 +1,226 @@
+.postal-mailer-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9998;
+    transition: background-color 0.2s;
+}
+
+.postal-mailer-button:hover {
+    background-color: #0056b3;
+}
+
+.postal-mailer-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+    display: none;
+}
+
+.postal-mailer-popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.postal-mailer-popup-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    padding: 24px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.postal-mailer-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.postal-mailer-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.postal-mailer-steps {
+    display: flex;
+    gap: 8px;
+}
+
+.step {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+}
+
+.step.active {
+    background-color: #007bff;
+}
+
+.postal-mailer-body {
+    min-height: 300px;
+    margin-bottom: 24px;
+}
+
+.recipients-list {
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.recipient-item {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.recipient-item .recipient-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.recipient-item .recipient-details {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.4;
+}
+
+.recipient-item .recipient-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.recipient-item .status-non-envoye {
+    background-color: #fed7d7;
+    color: #c53030;
+}
+
+.no-recipients {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+#postal-message {
+    width: 100%;
+    height: 200px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.template-actions {
+    margin-top: 12px;
+}
+
+.template-button {
+    background-color: #edf2f7;
+    color: #4a5568;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.template-button:hover {
+    background-color: #e2e8f0;
+}
+
+.cost-summary {
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.cost-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.cost-row.total {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.postal-mailer-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+}
+
+.postal-mailer-footer button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.postal-mailer-footer button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.postal-mailer-back {
+    background: none;
+    border: none;
+    color: #666;
+}
+
+.postal-mailer-back:disabled {
+    color: #ccc;
+}
+
+.postal-mailer-next {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.postal-mailer-next:hover:not(:disabled) {
+    background-color: #0056b3;
+}
