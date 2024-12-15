@@ -62,7 +62,6 @@ class Postal_Mailer_DB {
         
         $data = wp_parse_args($data, $defaults);
         
-        // Sanitize data
         $data = array(
             'user_id' => absint($data['user_id']),
             'name' => sanitize_text_field($data['name']),
@@ -75,23 +74,10 @@ class Postal_Mailer_DB {
             'status_paiement' => in_array($data['status_paiement'], ['pending', 'completed', 'failed']) 
                 ? $data['status_paiement'] 
                 : 'pending',
-            'order_id' => absint($data['order_id'])
+            'order_id' => $data['order_id'] ? absint($data['order_id']) : null
         );
         
-        $format = array(
-            '%d', // user_id
-            '%s', // name
-            '%s', // denomination
-            '%s', // address
-            '%s', // postal
-            '%s', // city
-            '%s', // status
-            '%s', // message
-            '%s', // status_paiement
-            '%d'  // order_id
-        );
-        
-        $result = $this->wpdb->insert($this->table_name, $data, $format);
+        $result = $this->wpdb->insert($this->table_name, $data);
         
         if (false === $result) {
             return new WP_Error('db_insert_error', 
@@ -101,5 +87,43 @@ class Postal_Mailer_DB {
         }
         
         return $this->wpdb->insert_id;
+    }
+
+    public function get_recipients($per_page = 10, $page = 1) {
+        $offset = ($page - 1) * $per_page;
+        
+        $sql = $this->wpdb->prepare(
+            "SELECT * FROM {$this->table_name} 
+            ORDER BY created_at DESC 
+            LIMIT %d OFFSET %d",
+            $per_page,
+            $offset
+        );
+        
+        return $this->wpdb->get_results($sql, ARRAY_A);
+    }
+
+    public function get_total_recipients() {
+        return (int) $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}");
+    }
+
+    public function update_recipient_status($recipient_id, $status) {
+        return $this->wpdb->update(
+            $this->table_name,
+            ['status' => $status],
+            ['id' => $recipient_id],
+            ['%s'],
+            ['%d']
+        );
+    }
+
+    public function update_payment_status($order_id, $status) {
+        return $this->wpdb->update(
+            $this->table_name,
+            ['status_paiement' => $status],
+            ['order_id' => $order_id],
+            ['%s'],
+            ['%d']
+        );
     }
 }

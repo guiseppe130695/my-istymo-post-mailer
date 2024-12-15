@@ -1,7 +1,9 @@
 window.POSTAL_MAILER_STORAGE = {
+    STORAGE_KEY: 'selectedProperties',
+    
     getSelectedProperties: function() {
         try {
-            const properties = localStorage.getItem('selectedProperties');
+            const properties = localStorage.getItem(this.STORAGE_KEY);
             return properties ? JSON.parse(properties) : [];
         } catch (error) {
             console.error('Error parsing selectedProperties:', error);
@@ -11,10 +13,8 @@ window.POSTAL_MAILER_STORAGE = {
 
     setSelectedProperties: function(properties) {
         try {
-            localStorage.setItem('selectedProperties', JSON.stringify(properties));
-            window.dispatchEvent(new CustomEvent('selectedPropertiesChanged', {
-                detail: { properties }
-            }));
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(properties));
+            this.notifyChange(properties);
         } catch (error) {
             console.error('Error saving selectedProperties:', error);
         }
@@ -22,12 +22,16 @@ window.POSTAL_MAILER_STORAGE = {
 
     clearSelectedProperties: function() {
         try {
-            localStorage.removeItem('selectedProperties');
-            window.dispatchEvent(new CustomEvent('selectedPropertiesChanged', {
-                detail: { properties: [] }
-            }));
+            localStorage.removeItem(this.STORAGE_KEY);
+            this.notifyChange([]);
         } catch (error) {
             console.error('Error clearing selectedProperties:', error);
         }
+    },
+    
+    notifyChange: function(properties) {
+        window.dispatchEvent(new CustomEvent('selectedPropertiesChanged', {
+            detail: { properties }
+        }));
     }
 };

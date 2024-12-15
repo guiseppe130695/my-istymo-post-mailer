@@ -1,41 +1,63 @@
-# Postal Mailer WordPress Plugin
+# Plugin Postal Mailer pour WordPress
 
-A WordPress plugin that provides a step-by-step postal mailing system with a modern, minimalist design.
+Un plugin WordPress qui permet d'envoyer facilement des courriers postaux via une interface moderne et intuitive.
 
-## Features
+## Fonctionnalités
 
-- Fixed floating button with notification counter
-- Three-step form process:
-  1. Recipients list display
-  2. Message composition
-  3. Cost summary
-- Modern, responsive design
-- AJAX form submission
-- Security features (nonce verification, data sanitization)
+- Bouton flottant avec compteur de destinataires
+- Processus en trois étapes simples :
+  1. Visualisation de la liste des destinataires
+  2. Rédaction du message
+  3. Résumé des coûts
+- Design moderne et responsive
+- Envoi des formulaires en AJAX
+- Sécurité renforcée
 
 ## Installation
 
-1. Upload the `postal-mailer` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. The postal mailing button will appear on all pages
+1. Téléchargez le dossier `postal-mailer`
+2. Déposez-le dans le répertoire `/wp-content/plugins/` de votre WordPress
+3. Activez le plugin dans le menu 'Extensions' de WordPress
 
-## Usage
+## Utilisation
 
-The plugin expects a JavaScript variable called `selectedProperties` to be available in the global scope, containing an array of objects with the following structure:
+### Pour les utilisateurs
 
-```javascript
-window.selectedProperties = [
-    {
-        id: "1",
-        name: "John Doe",
-        address: "123 Main St, City, Country"
-    },
-    // ... more recipients
-];
-```
+1. Le bouton "Envoyer par Poste" apparaît automatiquement sur la page du tableau de bord SCI
+2. Cliquez sur le bouton pour ouvrir l'interface d'envoi
+3. Suivez les trois étapes pour envoyer votre courrier :
+   - Vérifiez la liste des destinataires
+   - Rédigez votre message
+   - Validez le coût total
+4. Une fois validé, vous serez redirigé vers le panier pour finaliser votre commande
 
-## Security
+### Pour les administrateurs
 
-- All form submissions are protected with WordPress nonces
-- Input data is sanitized before processing
-- Direct file access is prevented
+- Accédez au menu "Postal Mailer" dans l'administration WordPress
+- Consultez l'historique des envois
+- Suivez le statut de chaque courrier
+
+## Prix
+
+- Coût par lettre : 1,16€
+- Le coût total est calculé automatiquement en fonction du nombre de destinataires
+
+## Sécurité
+
+- Protection contre les attaques CSRF
+- Données nettoyées et validées
+- Accès aux fichiers sécurisé
+- Logs des actions importantes
+
+## Support
+
+Pour toute question ou assistance :
+1. Consultez la documentation
+2. Contactez le support technique
+3. Signalez les bugs éventuels
+
+## Prérequis
+
+- WordPress 5.0 ou supérieur
+- PHP 7.4 ou supérieur
+- WooCommerce installé et activé

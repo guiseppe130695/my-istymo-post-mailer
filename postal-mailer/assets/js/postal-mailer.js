@@ -4,7 +4,7 @@ function initPostalMailer() {
     const popup = document.getElementById('postal-mailer-popup');
     const closeBtn = document.querySelector('.postal-mailer-close');
     const backBtn = document.querySelector('.postal-mailer-back');
-    const submitBtn = document.getElementById('postal-mailer-submit');
+    const nextBtn = document.querySelector('.postal-mailer-next');
     const steps = document.querySelectorAll('.postal-mailer-step');
     const stepDots = document.querySelectorAll('.step');
     const loadTemplateBtn = document.getElementById('load-template');
@@ -13,22 +13,24 @@ function initPostalMailer() {
     
     function showStep(step) {
         steps.forEach((s, index) => {
-            s.style.display = index + 1 === step ? 'block' : 'none';
+            if (s) s.style.display = index + 1 === step ? 'block' : 'none';
         });
         
         stepDots.forEach((dot, index) => {
-            dot.classList.toggle('active', index + 1 <= step);
+            if (dot) dot.classList.toggle('active', index + 1 <= step);
         });
         
-        backBtn.disabled = step === 1;
-        submitBtn.textContent = step === 3 ? 'Envoyer' : 'Suivant';
+        if (backBtn) backBtn.disabled = step === 1;
+        if (nextBtn) nextBtn.textContent = step === 3 ? 'Envoyer' : 'Suivant';
         
         currentStep = step;
     }
     
     function loadTemplate() {
         const messageArea = document.getElementById('postal-message');
-        messageArea.value = POSTAL_MAILER_CONFIG.DEFAULT_TEMPLATE;
+        if (messageArea) {
+            messageArea.value = POSTAL_MAILER_CONFIG.DEFAULT_TEMPLATE;
+        }
     }
     
     async function handleSubmit() {
@@ -39,37 +41,53 @@ function initPostalMailer() {
         
         try {
             const properties = POSTAL_MAILER_STORAGE.getSelectedProperties();
-            const message = document.getElementById('postal-message').value;
+            const message = document.getElementById('postal-message')?.value;
             
             if (!properties.length) {
                 alert('Veuillez sélectionner au moins un destinataire.');
                 return;
             }
             
-            if (!message.trim()) {
+            if (!message?.trim()) {
                 alert('Veuillez saisir un message.');
                 return;
             }
             
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Envoi en cours...';
+            if (nextBtn) {
+                nextBtn.disabled = true;
+                nextBtn.textContent = 'Envoi en cours...';
+            }
             
-            const response = await POSTAL_MAILER_API.submitForm({
-                recipients: properties,
-                message: message
+            const formData = new FormData();
+            formData.append('action', 'postal_mailer_submit');
+            formData.append('nonce', postalMailerData.nonce);
+            formData.append('recipients', JSON.stringify(properties));
+            formData.append('message', message);
+            
+            const response = await fetch(postalMailerData.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
             });
             
-            if (response.success) {
-                // Redirect to cart without clearing localStorage
-                window.location.href = response.data.redirect_url;
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.data.redirect_url;
             } else {
-                throw new Error(response.data.message);
+                throw new Error(result.data.message || 'Une erreur est survenue');
             }
         } catch (error) {
             console.error('Error:', error);
             alert('Une erreur est survenue. Veuillez réessayer.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Envoyer';
+            if (nextBtn) {
+                nextBtn.disabled = false;
+                nextBtn.textContent = 'Envoyer';
+            }
         }
     }
     
@@ -89,7 +107,7 @@ function initPostalMailer() {
         closeBtn.addEventListener('click', () => {
             if (popup) {
                 popup.style.display = 'none';
-                showStep(1);
+                showStep(1); // Reset to first step when closing
             }
         });
     }
@@ -102,8 +120,8 @@ function initPostalMailer() {
         });
     }
     
-    if (submitBtn) {
-        submitBtn.addEventListener('click', handleSubmit);
+    if (nextBtn) {
+        nextBtn.addEventListener('click', handleSubmit);
     }
     
     if (loadTemplateBtn) {
@@ -111,14 +129,20 @@ function initPostalMailer() {
     }
     
     // Initial setup
-    POSTAL_MAILER_NOTIFICATION.updateNotificationCount();
+    if (typeof POSTAL_MAILER_NOTIFICATION !== 'undefined') {
+        POSTAL_MAILER_NOTIFICATION.updateNotificationCount();
+    }
     
     // Listen for storage changes
     window.addEventListener('selectedPropertiesChanged', () => {
-        POSTAL_MAILER_NOTIFICATION.updateNotificationCount();
+        if (typeof POSTAL_MAILER_NOTIFICATION !== 'undefined') {
+            POSTAL_MAILER_NOTIFICATION.updateNotificationCount();
+        }
         if (popup && popup.style.display === 'flex') {
             const properties = POSTAL_MAILER_STORAGE.getSelectedProperties();
-            POSTAL_MAILER_RECIPIENTS.populateRecipients(properties);
+            if (typeof POSTAL_MAILER_RECIPIENTS !== 'undefined') {
+                POSTAL_MAILER_RECIPIENTS.populateRecipients(properties);
+            }
         }
     });
 }

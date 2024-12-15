@@ -20,12 +20,13 @@ register_activation_hook(__FILE__, array('Postal_Mailer_Activator', 'activate'))
 
 // Load required files
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-activator.php';
+require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-db.php';
+require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-logger.php';
+require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/services/class-postal-mailer-recipient-service.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-cart.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-form.php';
-require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-db.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-admin.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-woocommerce.php';
-require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/class-postal-mailer-logger.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/enqueue.php';
 require_once POSTAL_MAILER_PLUGIN_DIR . 'includes/template-loader.php';
 
